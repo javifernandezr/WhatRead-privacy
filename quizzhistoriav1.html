@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Historia - La Edad Moderna | 3 Quizzes</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --primary:#3157d5;
+    --primary-dark:#2443ad;
+    --border:#d9deea;
+    --correct:#15803d;
+    --correct-bg:#ecfdf3;
+    --incorrect:#b91c1c;
+    --incorrect-bg:#fef2f2;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+
+  header{
+    background:linear-gradient(135deg,#243b8f,#4668df);
+    color:white;
+    padding:34px 18px 28px;
+    text-align:center;
+  }
+
+  header h1{
+    margin:0 0 8px;
+    font-size:clamp(1.8rem,4vw,2.7rem);
+  }
+
+  header p{margin:0;opacity:.92}
+
+  .wrap{
+    max-width:900px;
+    margin:22px auto 60px;
+    padding:0 16px;
+  }
+
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:18px;
+  }
+
+  .step{
+    background:#e5e7eb;
+    color:#4b5563;
+    border-radius:12px;
+    text-align:center;
+    padding:10px 8px;
+    font-weight:700;
+  }
+
+  .step.active{
+    background:var(--primary);
+    color:white;
+  }
+
+  .step.done{
+    background:#dcfce7;
+    color:#166534;
+  }
+
+  .intro{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:18px;
+    box-shadow:0 5px 18px rgba(31,41,55,.05);
+  }
+
+  .page{display:none}
+  .page.active{display:block}
+
+  .page-title{
+    margin:8px 0 4px;
+    font-size:1.5rem;
+  }
+
+  .page-subtitle{
+    margin:0 0 18px;
+    color:var(--muted);
+  }
+
+  .question{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin:14px 0;
+    box-shadow:0 6px 18px rgba(31,41,55,.05);
+  }
+
+  .question h2{
+    margin:0 0 14px;
+    font-size:1.08rem;
+    line-height:1.4;
+  }
+
+  .option{
+    display:block;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+    margin:9px 0;
+    cursor:pointer;
+    transition:.15s ease;
+    background:white;
+  }
+
+  .option:hover{
+    border-color:#9fb0f2;
+    background:#f8faff;
+  }
+
+  .option input{margin-right:10px}
+
+  .option.correct{
+    border-color:var(--correct);
+    background:var(--correct-bg);
+    color:#14532d;
+    font-weight:700;
+  }
+
+  .option.incorrect{
+    border-color:var(--incorrect);
+    background:var(--incorrect-bg);
+    color:#7f1d1d;
+    font-weight:700;
+  }
+
+  .question.locked .option{
+    cursor:default;
+  }
+
+  .feedback{
+    margin-top:10px;
+    font-size:.95rem;
+    font-weight:700;
+  }
+
+  .feedback.ok{color:var(--correct)}
+  .feedback.bad{color:var(--incorrect)}
+
+  .progress-box{
+    margin:14px 0 18px;
+    padding:12px 14px;
+    border-radius:12px;
+    background:#eef2ff;
+    border:1px solid #c7d2fe;
+    color:#312e81;
+    font-weight:700;
+  }
+
+  .actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:24px;
+  }
+
+  button{
+    border:0;
+    border-radius:11px;
+    padding:12px 18px;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .primary{
+    background:var(--primary);
+    color:white;
+  }
+
+  .primary:hover{background:var(--primary-dark)}
+
+  .primary:disabled{
+    background:#aeb8d8;
+    cursor:not-allowed;
+  }
+
+  .secondary{
+    background:#e5e7eb;
+    color:#111827;
+  }
+
+  .final-card{
+    display:none;
+    background:white;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:24px;
+    margin-top:20px;
+    box-shadow:0 8px 24px rgba(31,41,55,.06);
+  }
+
+  .final-card h2{margin-top:0}
+
+  .score-big{
+    font-size:2.3rem;
+    font-weight:800;
+    color:var(--primary);
+    margin:8px 0;
+  }
+
+  @media (max-width:640px){
+    .steps{grid-template-columns:1fr}
+    .question{padding:16px}
+  }
+</style>
+</head>
+
+<body>
+<header>
+  <h1>La Edad Moderna</h1>
+  <p>3 quizzes · 30 preguntas · 6.º de Primaria</p>
+</header>
+
+<main class="wrap">
+
+  <div class="steps">
+    <div class="step active" id="step1">Quiz 1</div>
+    <div class="step" id="step2">Quiz 2</div>
+    <div class="step" id="step3">Quiz 3</div>
+  </div>
+
+  <div class="intro">
+    Cada pregunta se corrige <strong>en el momento de contestarla</strong>.
+    Si fallas, se marcará tu respuesta en rojo y la correcta en verde.
+    Una vez respondida, la pregunta queda bloqueada.
+  </div>
+
+  <section class="page active" id="page1">
+    <h2 class="page-title">Quiz 1 · Inicio de la Edad Moderna</h2>
+    <p class="page-subtitle">Descubrimientos, navegación, Humanismo y Renacimiento.</p>
+    <div class="progress-box" id="progress1">Respondidas: 0 / 10 · Aciertos: 0</div>
+    <div id="quiz1"></div>
+    <div class="actions">
+      <button class="primary" id="next1" disabled>Ir al Quiz 2</button>
+    </div>
+  </section>
+
+  <section class="page" id="page2">
+    <h2 class="page-title">Quiz 2 · Sociedad y monarquía</h2>
+    <p class="page-subtitle">Estamentos, Reyes Católicos, Reforma y Austrias.</p>
+    <div class="progress-box" id="progress2">Respondidas: 0 / 10 · Aciertos: 0</div>
+    <div id="quiz2"></div>
+    <div class="actions">
+      <button class="primary" id="next2" disabled>Ir al Quiz 3</button>
+    </div>
+  </section>
+
+  <section class="page" id="page3">
+    <h2 class="page-title">Quiz 3 · Siglos XVII y XVIII</h2>
+    <p class="page-subtitle">Crisis, Guerra de Sucesión, Borbones, absolutismo e Ilustración.</p>
+    <div class="progress-box" id="progress3">Respondidas: 0 / 10 · Aciertos: 0</div>
+    <div id="quiz3"></div>
+    <div class="actions">
+      <button class="secondary" id="restart" style="display:none">Reiniciar todo</button>
+    </div>
+  </section>
+
+  <div class="final-card" id="finalCard">
+    <h2>Resultado final</h2>
+    <div class="score-big" id="totalScore"></div>
+    <div id="finalMessage"></div>
+  </div>
+</main>
+
+<script>
+const quizzes = [
+  [
+    {q:"¿Qué acontecimiento marca el inicio de la Edad Moderna?",a:["La Revolución Francesa","El descubrimiento de América","La invención de la máquina de vapor","La Guerra de Sucesión"],c:1},
+    {q:"¿En qué año se descubrió América?",a:["1492","1517","1588","1789"],c:0},
+    {q:"¿Qué invento permitió difundir libros e ideas con mayor rapidez?",a:["La brújula","La imprenta","La máquina de vapor","El astrolabio"],c:1},
+    {q:"¿Quién inventó la imprenta de tipos móviles en Europa?",a:["Cristóbal Colón","Johannes Gutenberg","Martín Lutero","Fernando de Aragón"],c:1},
+    {q:"¿Qué instrumento ayudaba a los navegantes a orientarse?",a:["Telescopio","Brújula","Termómetro","Microscopio"],c:1},
+    {q:"¿Quién dirigió la expedición que llegó a América en 1492?",a:["Magallanes","Elcano","Cristóbal Colón","Carlos I"],c:2},
+    {q:"¿Qué expedición realizó la primera vuelta al mundo?",a:["Colón y los Reyes Católicos","Magallanes y Elcano","Carlos I y Felipe II","Lutero y Gutenberg"],c:1},
+    {q:"¿Qué defendía principalmente el Humanismo?",a:["Que el ser humano era el centro del pensamiento","Que solo los reyes podían estudiar","Que la ciencia debía desaparecer","Que no era necesaria la educación"],c:0},
+    {q:"¿Qué movimiento artístico y cultural se desarrolló durante los siglos XV y XVI?",a:["Barroco","Renacimiento","Romanticismo","Realismo"],c:1},
+    {q:"¿Qué mejoras facilitaron los grandes viajes marítimos?",a:["Brújula, mapas, astrolabio y carabela","Ferrocarril, automóvil y avión","Radio, teléfono y televisión","Máquina de vapor y electricidad"],c:0}
+  ],
+  [
+    {q:"¿Quiénes fueron los Reyes Católicos?",a:["Carlos I y Felipe II","Isabel I de Castilla y Fernando II de Aragón","Felipe III y Felipe IV","Felipe V y Carlos III"],c:1},
+    {q:"¿Qué reino conquistaron los Reyes Católicos en 1492?",a:["Portugal","Granada","Francia","Inglaterra"],c:1},
+    {q:"¿Qué grupos formaban los estamentos privilegiados?",a:["Burgueses y campesinos","Nobleza y clero","Artesanos y comerciantes","Campesinos y soldados"],c:1},
+    {q:"¿Cuál de estos grupos pertenecía a los no privilegiados?",a:["Nobleza","Clero","Burguesía","Familia real"],c:2},
+    {q:"¿Qué ventaja tenían los grupos privilegiados?",a:["Pagaban más impuestos","No pagaban impuestos","No podían tener tierras","No podían participar en política"],c:1},
+    {q:"¿Quiénes trabajaban principalmente en el campo?",a:["Nobles","Campesinos","Reyes","Clero"],c:1},
+    {q:"¿Quién inició la Reforma protestante en 1517?",a:["Martín Lutero","Cristóbal Colón","Carlos II","Felipe V"],c:0},
+    {q:"¿Qué dos monarcas de la casa de Austria gobernaron España en el siglo XVI?",a:["Carlos I y Felipe II","Felipe III y Felipe IV","Felipe V y Fernando VI","Carlos III y Carlos IV"],c:0},
+    {q:"¿Qué rey también fue emperador con el nombre de Carlos V?",a:["Carlos I","Carlos II","Carlos III","Carlos IV"],c:0},
+    {q:"¿En qué año fue derrotada la Armada Invencible?",a:["1492","1517","1588","1700"],c:2}
+  ],
+  [
+    {q:"¿Qué ocurrió en España durante el siglo XVII?",a:["Una gran expansión territorial","Una etapa de decadencia y crisis","El descubrimiento de América","La llegada de los Reyes Católicos"],c:1},
+    {q:"¿Qué monarcas gobernaron España durante el siglo XVII?",a:["Carlos I, Felipe II y Felipe V","Felipe III, Felipe IV y Carlos II","Isabel I, Fernando II y Carlos I","Felipe V, Fernando VI y Carlos III"],c:1},
+    {q:"¿Cómo se llamaban las personas de confianza que gobernaban en nombre de algunos reyes del siglo XVII?",a:["Validos","Humanistas","Burgueses","Exploradores"],c:0},
+    {q:"¿Qué tratado puso fin a la Guerra de los Treinta Años?",a:["Tratado de Utrecht","Paz de Westfalia","Tratado de Tordesillas","Tratado de Versalles"],c:1},
+    {q:"¿Por qué comenzó la Guerra de Sucesión española?",a:["Porque Carlos II murió sin descendencia","Porque España descubrió América","Porque Felipe II abandonó el trono","Porque comenzó la Reforma protestante"],c:0},
+    {q:"¿Quién se convirtió en rey de España después de la Guerra de Sucesión?",a:["Carlos II","Felipe V","Fernando II","Felipe III"],c:1},
+    {q:"¿Qué tratado puso fin a la Guerra de Sucesión española?",a:["Tratado de Utrecht","Paz de Westfalia","Tratado de Tordesillas","Edicto de Nantes"],c:0},
+    {q:"¿Qué dinastía comenzó a reinar en España con Felipe V?",a:["Los Austrias","Los Borbones","Los Trastámara","Los Tudor"],c:1},
+    {q:"¿Qué es una monarquía absoluta?",a:["Un sistema en el que el rey concentra gran parte del poder","Un sistema en el que gobiernan los campesinos","Un sistema sin rey","Un sistema en el que todos gobiernan directamente"],c:0},
+    {q:"¿Qué movimiento del siglo XVIII defendía la razón, la ciencia y el progreso?",a:["Renacimiento","Ilustración","Barroco","Feudalismo"],c:1}
+  ]
+];
+
+const state = quizzes.map(q => ({
+  answered: Array(q.length).fill(false),
+  score: 0
+}));
+
+function renderQuiz(index){
+  const container = document.getElementById(`quiz${index+1}`);
+  container.innerHTML = "";
+
+  quizzes[index].forEach((item, qi) => {
+    const box = document.createElement("div");
+    box.className = "question";
+    box.id = `qbox-${index}-${qi}`;
+
+    const title = document.createElement("h2");
+    title.textContent = `${qi+1}. ${item.q}`;
+    box.appendChild(title);
+
+    item.a.forEach((opt, oi) => {
+      const label = document.createElement("label");
+      label.className = "option";
+      label.dataset.option = oi;
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `q-${index}-${qi}`;
+      input.value = oi;
+      input.addEventListener("change", () => answerQuestion(index, qi, oi));
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(` ${String.fromCharCode(65+oi)}) ${opt}`));
+      box.appendChild(label);
+    });
+
+    const feedback = document.createElement("div");
+    feedback.className = "feedback";
+    feedback.id = `feedback-${index}-${qi}`;
+    box.appendChild(feedback);
+
+    container.appendChild(box);
+  });
+}
+
+function answerQuestion(quizIndex, questionIndex, selectedIndex){
+  if(state[quizIndex].answered[questionIndex]) return;
+
+  const item = quizzes[quizIndex][questionIndex];
+  const box = document.getElementById(`qbox-${quizIndex}-${questionIndex}`);
+  const labels = box.querySelectorAll(".option");
+  const feedback = document.getElementById(`feedback-${quizIndex}-${questionIndex}`);
+
+  state[quizIndex].answered[questionIndex] = true;
+
+  labels.forEach((label, oi) => {
+    const input = label.querySelector("input");
+    input.disabled = true;
+
+    if(oi === item.c){
+      label.classList.add("correct");
+    }
+
+    if(oi === selectedIndex && selectedIndex !== item.c){
+      label.classList.add("incorrect");
+    }
+  });
+
+  box.classList.add("locked");
+
+  if(selectedIndex === item.c){
+    state[quizIndex].score++;
+    feedback.textContent = "Correcta";
+    feedback.className = "feedback ok";
+  }else{
+    feedback.textContent = `Incorrecta. La correcta es ${String.fromCharCode(65+item.c)}) ${item.a[item.c]}.`;
+    feedback.className = "feedback bad";
+  }
+
+  updateProgress(quizIndex);
+}
+
+function updateProgress(index){
+  const answeredCount = state[index].answered.filter(Boolean).length;
+  const score = state[index].score;
+
+  document.getElementById(`progress${index+1}`).textContent =
+    `Respondidas: ${answeredCount} / ${quizzes[index].length} · Aciertos: ${score}`;
+
+  if(answeredCount === quizzes[index].length){
+    if(index < 2){
+      document.getElementById(`next${index+1}`).disabled = false;
+    }else{
+      document.getElementById("restart").style.display = "inline-block";
+      showFinalResult();
+    }
+  }
+}
+
+function goToPage(index){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(`page${index+1}`).classList.add("active");
+
+  for(let i=0;i<3;i++){
+    const step = document.getElementById(`step${i+1}`);
+    step.classList.remove("active","done");
+    if(i < index) step.classList.add("done");
+    if(i === index) step.classList.add("active");
+  }
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function showFinalResult(){
+  const total = state.reduce((sum, quizState) => sum + quizState.score, 0);
+  const finalCard = document.getElementById("finalCard");
+  const totalScore = document.getElementById("totalScore");
+  const finalMessage = document.getElementById("finalMessage");
+
+  totalScore.textContent = `${total} / 30`;
+
+  if(total >= 27){
+    finalMessage.textContent = "Excelente resultado.";
+  }else if(total >= 21){
+    finalMessage.textContent = "Muy buen resultado. Repasa solo los errores.";
+  }else if(total >= 15){
+    finalMessage.textContent = "Buen intento. Conviene repasar los temas donde has fallado.";
+  }else{
+    finalMessage.textContent = "Necesitas repasar el tema antes de repetir el quiz.";
+  }
+
+  finalCard.style.display = "block";
+
+  document.getElementById("step1").className = "step done";
+  document.getElementById("step2").className = "step done";
+  document.getElementById("step3").className = "step done";
+}
+
+for(let i=0;i<3;i++) renderQuiz(i);
+
+document.getElementById("next1").addEventListener("click",()=>goToPage(1));
+document.getElementById("next2").addEventListener("click",()=>goToPage(2));
+document.getElementById("restart").addEventListener("click",()=>location.reload());
+</script>
+</body>
+</html>
